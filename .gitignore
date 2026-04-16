@@ -93,6 +93,21 @@ build_output.log
 
 Thumbs.db
 Desktop.ini
+# Project build / IDE
+.venv/
+.tmp/
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+PDFBread.spec
+build_output.log
+.vscode/
+.idea/
+
+Thumbs.db
+Desktop.ini
 
 # IPython
 profile_default/

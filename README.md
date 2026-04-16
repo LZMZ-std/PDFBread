@@ -1,81 +1,50 @@
 # PDFBread
 
-PDFBread is a desktop PDF presenter for dual-screen talks with an optional NDI output path.
+![PDFBread Icon](icon.png)
 
-## What It Does
+PDFBread — это настольное приложение для показа PDF на двух экранах с опциональной поддержкой вывода NDI.
 
-- Opens multiple PDF decks in separate tabs.
-- Shows the audience presentation on one screen and a teleprompter view on another.
-- Keeps a presenter console in the main app window with slide thumbnails and a large current-slide preview.
-- Supports optional NDI output for both the main presentation feed and the teleprompter feed.
-- Lets you keep per-tab timers while also defining a default timer duration in settings.
+## Что делает
 
-## Current Workflow
+- Открывает несколько PDF-презентаций в отдельных вкладках.
+- Показывает аудитории презентацию на одном экране и телесуфлёр на другом.
+- Содержит консоль ведущего в основном окне с миниатюрами слайдов и большим предварительным просмотром текущего слайда.
+- Поддерживает опциональный NDI-вывод как для основного потока, так и для телесуфлёра.
+- Позволяет задавать таймеры для каждой вкладки и при этом использовать значение по умолчанию из настроек.
 
-- `Открыть PDF` loads a PDF into the current tab.
-- `+` creates a new empty PDF tab.
-- `Настройки` opens a separate settings window for:
-  - output screens;
-  - global NDI configuration;
-  - default timer duration for tabs.
-- `Запуск` starts the presentation and teleprompter outputs.
-- While a deck is live, switching to another PDF tab allows sending that tab to output with `Вывести вкладку`.
+## Как пользоваться
 
-## Controls
+- `Открыть PDF` загружает PDF в текущую вкладку.
+- `+` создаёт новую пустую PDF-вкладку.
+- `Настройки` открывает отдельное окно настроек для:
+  - выбора экранов вывода;
+  - глобальной настройки NDI;
+  - установки значения таймера по умолчанию для вкладок.
+- `Запуск` начинает вывод презентации и телесуфлёра.
+- Если презентация запущена, можно переключиться на другую вкладку и вывести её с помощью `Вывести вкладку`.
 
-- Click the large slide preview to go forward.
-- Use `Left/Right`, `Up/Down`, `PageUp/PageDown`, `Space`, or `Backspace` to navigate.
-- Press `Esc` in the fullscreen output windows to stop the live output.
+## Управление
 
-## Timer Logic
+- Клик по большому превью слайда переходит вперёд.
+- Используйте `Left/Right`, `Up/Down`, `PageUp/PageDown`, `Space` или `Backspace` для навигации.
+- Нажмите `Esc` в полноэкранных окнах вывода, чтобы остановить вещание.
 
-- Each PDF tab has its own timer.
-- Settings only define the default duration.
-- `Из настроек` inside a tab copies the default duration to that tab.
-- `Применить ко всем вкладкам` applies the default duration to every open PDF tab.
+## Таймеры
+
+- У каждой PDF-вкладки свой таймер.
+- В настройках задаётся только значение таймера по умолчанию.
+- `Из настроек` внутри вкладки копирует значение таймера по умолчанию в эту вкладку.
+- `Применить ко всем вкладкам` устанавливает это значение для всех открытых вкладок.
 
 ## NDI
 
-- NDI is optional.
-- To use it on Windows, install `NDI Tools` or `NDI Runtime`.
-- PDFBread can publish:
-  - `Main` feed;
-  - `Teleprompter` feed.
-- NDI is configured once in the settings window and applies to all tabs.
+- NDI используется по желанию.
+- Чтобы использовать его на Windows, установите `NDI Tools` или `NDI Runtime`.
+- PDFBread может отправлять:
+  - основной поток (`Main`);
+  - поток телесуфлёра (`Teleprompter`).
+- Настройки NDI задаются один раз и применяются ко всем вкладкам.
 
-## Quick Start
+## Быстрый старт
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python -m pdfbread
-```
-
-Or use the included launchers:
-
-- `run_pdfbread_gui.bat`
-- `run_pdfbread.bat`
-
-## Build EXE
-
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-.\build_exe.ps1
-```
-
-The build output will appear in:
-
-```text
-dist\PDFBread\PDFBread.exe
-```
-
-## Project Layout
-
-- `src/pdfbread/` — application source code
-- `icon.png` — application icon
-- `run_pdfbread*.bat/.ps1` — Windows launch helpers
-- `build_exe.ps1` — PyInstaller build script
-
+Запустите собранный `PDFBread.exe` из папки `dist\PDFBread`.
