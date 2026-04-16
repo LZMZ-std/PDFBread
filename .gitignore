@@ -1,6 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[codz]
+*.py[cod]
+*.pyo
+*.pyd
 *$py.class
 
 # C extensions
@@ -27,8 +29,6 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
 
@@ -77,6 +77,22 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# Project build / IDE
+.venv/
+.tmp/
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+PDFBread.spec
+build_output.log
+.vscode/
+.idea/
+
+Thumbs.db
+Desktop.ini
 
 # IPython
 profile_default/
@@ -205,3 +221,23 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+=======
+.venv/
+.tmp/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+build/
+dist/
+*.egg-info/
+PDFBread.spec
+build_output.log
+
+.idea/
+.vscode/
+
+Thumbs.db
+Desktop.ini
+>>>>>>> a8a41c2 (Initial commit)
