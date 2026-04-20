@@ -1,0 +1,908 @@
+/* ------------------------------------------------------------
+   Шпаргалка по theme.qss
+
+   Как работать:
+   - меняешь значения;
+   - сохраняешь файл;
+   - жмешь F5 в приложении.
+
+   Через QSS удобно править:
+   - background, color, border, border-radius;
+   - padding, font-size;
+   - hover/selected состояния;
+   - размеры виджетов, если это их собственные свойства.
+
+   Через QSS неудобно править:
+   - порядок блоков;
+   - layout-геометрию;
+   - сложное позиционирование кастомных элементов.
+   ------------------------------------------------------------ */
+
+/* PDFBread theme.qss
+   Как редактировать:
+   - меняешь значения цветов/бордеров/радиусов
+   - сохраняешь файл
+   - в приложении жмёшь F5 для live-reload
+   Основные секции ниже:
+   - main_window: верхний toolbar, вкладки, кнопки главного окна
+   - workspace: центральная вкладка со слайдами, таймером и правой панелью
+   - settings: окно настроек
+   - preview_label / empty_preview_label: большой preview текущего слайда
+   - slide_card: миниатюры слева
+   - transport_button_*: кнопка Запуск/Стоп
+*/
+
+/*<main_window>*/
+/* main_window:
+   верхняя часть приложения.
+   Здесь лежат toolbar, вкладки, кнопки, плюсик и крестик закрытия. */
+/* Главное окно:
+   - toolbar сверху
+   - плашки "Пустая вкладка" / "Слайд"
+   - кнопки "Открыть PDF", "Настройки", "Запуск"
+   - tab bar и кнопки вкладок
+*/
+/* Фон главного окна за пределами внутренних панелей. */
+QMainWindow {
+    background: #ff0d1117;
+}
+/* Базовый цвет текста и размер шрифта для main window. */
+QWidget {
+    color: #e6edf3;
+    font-size: 14px;
+}
+/* Верхняя полоса с кнопками и статусом. */
+QToolBar {
+    background: #11161d;
+    border: none;
+    border-bottom: 1px solid #21262d;
+    spacing: 10px;
+    padding: 12px 14px;
+}
+/* Положение всей полосы вкладок внутри QTabWidget:
+   left - сдвиг вправо/влево,
+   top - сдвиг вниз/вверх. */
+QTabWidget::tab-bar {
+    /* Смещение вниз, чтобы tab bar жил отдельно от верхнего toolbar */
+    left: 14px;
+    top: 10px;
+}
+QLabel#toolbarFilePill, QLabel#toolbarSlidePill {
+    /* Верхние статусные плашки */
+    background: transparent;
+    color: #e6edf3;
+    border: 1px solid #2d333b;
+    border-radius: 10px;
+    padding: 2px 12px;
+    min-height: 10px;
+}
+QLabel#toolbarFilePill {
+    min-width: 280px;
+    font-weight: 600;
+}
+QLabel#toolbarSlidePill {
+    color: #8b949e;
+    font-weight: 700;
+    min-width: 150px;
+}
+QLabel#toolbarCreditLabel {
+    /* Подпись Developed by ... */
+    color: #577d8590;
+    padding-left: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+QLabel#outputStatusIcon {
+    /* Иконки статуса после Developed by LZMZ:
+       1 - главный экран, 2 - суфлёр, 3 - NDI.
+       Сама пиктограмма рисуется в Python, цвет берётся из output_status_icon_* ниже. */
+    background: transparent;
+    border: none;
+    min-width: 24px;
+    max-width: 24px;
+    min-height: 20px;
+    max-height: 20px;
+    margin-left: 4px;
+}
+QLabel#outputStatusIcon[status="active"] {
+    /* Работает */
+    background: transparent;
+}
+QLabel#outputStatusIcon[status="off"] {
+    /* Выключено / не выбрано */
+    background: transparent;
+}
+QLabel#outputStatusIcon[status="error"] {
+    /* После запуска выключено / не работает */
+    background: transparent;
+}
+QToolButton, QPushButton {
+    background: transparent;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 9px 14px;
+}
+QToolButton:hover, QPushButton:hover {
+    border-color: #58a6ff;
+    background: #1c2128;
+}
+QPushButton#transportButton {
+    /* Кнопка Запуск/Стоп в toolbar */
+    background: #161b22;
+    border-color: #30363d;
+    color: #ffffff;
+    font-weight: 700;
+    min-width: 42px;
+    max-width: 42px;
+    min-height: 42px;
+    max-height: 42px;
+    padding: 0px;
+    border-radius: 10px;
+}
+QPushButton#transportButton:hover {
+    background: #8830df19;
+    border-color: #8830df19;
+}
+QPushButton#switchOutputButton {
+    /* Кнопка "Вывести вкладку" после статус-иконок */
+    background: #161b22;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 5px 10px;
+    min-height: 20px;
+    font-weight: 700;
+    font-size: 12px;
+}
+QPushButton#switchOutputButton:hover {
+    background: #1c2128;
+}
+QPushButton#switchOutputButton:disabled {
+    color: #6e7681;
+    border-color: #21262d;
+    background: #11161d;
+}
+QPushButton#toolbarActionButton {
+    /* Кнопки "Открыть PDF" и "Настройки" */
+    background: #161b22;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 9px 9px;
+    min-width: 120px;
+    min-height: 10px;
+}
+QPushButton#toolbarActionButton:hover {
+    border-color: #1c2128;
+    background: #1c2128;
+}
+/* Тело активной вкладки под tab bar.
+   top - зазор между табами и содержимым. */
+QTabWidget::pane {
+    /* Контейнер под содержимое активной вкладки */
+    border: 1px solid #21262d;
+    border-radius: 16px;
+    top: 10px;
+    background: #0f141b;
+}
+/* Обычная вкладка:
+   min-width/max-width - длина,
+   margin-right - зазор между вкладками,
+   margin-top - насколько таб опущен вниз,
+   padding - внутренние отступы. */
+QTabBar::tab {
+    /* Обычная вкладка сверху */
+    background: #11161d;
+    color: #8b949e;
+    border: 1px solid #30363d;
+    padding: 11px 14px;
+    margin-right: 1px;
+    margin-top: 0px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    min-width: 90px;
+    max-width: 190px;
+}
+/* Активная вкладка:
+   border-bottom-color: transparent убирает нижнюю грань,
+   margin-top можно использовать, чтобы поднимать/опускать активный таб. */
+QTabBar::tab:selected {
+    /* Активная вкладка */
+    background: #21262d;
+    color: #f0f6fc;
+    border-color: #0058a6ff;
+    border-bottom-color: transparent;
+    margin-top: 0px;
+}
+QTabBar::tab:focus {
+    outline: none;
+}
+/* Кнопка "+":
+   border-radius - форма,
+   min/max-width и height - размер,
+   font-size - размер символа. */
+QToolButton#tabAddButton {
+    /* Кнопка "+" */
+    background: #161b22;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    min-width: 15px;
+    max-width: 28px;
+    min-height: 15px;
+    max-height: 15px;
+    padding: 0px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    padding-bottom: 15px;
+}
+QToolButton#tabAddButton:hover {
+    background: #1c2128;
+}
+QWidget#tabAddReserve {
+    /* Резерв справа в tab bar под кнопку "+" */
+    background: transparent;
+    border: none;
+}
+QWidget#tabCloseContainer {
+    background: transparent;
+}
+/* Крестик закрытия вкладки.
+   Здесь лучше править только внешний вид.
+   Точная позиция частично задается из Python. */
+QToolButton#tabCloseButton {
+    /* Маленькая кнопка закрытия вкладки */
+    background: transparent;
+    color: #8b949e;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    min-width: 22px;
+    max-width: 22px;
+    min-height: 22px;
+    max-height: 22px;
+    padding: 0px;
+    font-size: 14px;
+    font-weight: 700;
+}
+QToolButton#tabCloseButton:hover {
+    background: #1c2128;
+    color: transparent;
+    border-color: transparent;
+}
+/*</main_window>*/
+
+/*<workspace>*/
+/* workspace:
+   рабочая вкладка со слайдами.
+   Здесь миниатюры слева, большой preview и правая колонка. */
+/* Основная рабочая вкладка:
+   - список миниатюр слева
+   - preview текущего слайда
+   - правые блоки "Документ", "Таймер", "Навигация"
+*/
+/* Базовый фон и цвет текста всей рабочей вкладки. */
+QWidget {
+    background: #000d1117;
+    color: #e6edf3;
+    font-size: 14px;
+}
+QPushButton, QSpinBox {
+    background: #161b22;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 9px 12px;
+    min-height: 18px;
+}
+QPushButton:hover {
+    border-color: #58a6ff;
+    background: #1c2128;
+}
+QSpinBox:hover, QSpinBox:focus {
+    border-color: #30363d;
+    background: #161b22;
+}
+QWidget#sidePanel {
+    /* Правая колонка с блоками Документ / Таймер / Навигация */
+    background: transparent;
+}
+QPushButton#timerDefaultsButton {
+    /* Кнопка "Из настроек" */
+    background: #161b22;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 700;
+}
+QPushButton#timerDefaultsButton:hover {
+    background: #21262d;
+    border-color: #21262d;
+}
+QPushButton#dangerButton {
+    /* Кнопка сброса таймера */
+    background: #161b22;
+    border-color: #30363d;
+    color: #f0f6fc;
+    font-weight: 700;
+}
+QPushButton#dangerButton:hover {
+    background: #da3633;
+    border-color: #f85149;
+}
+QPushButton#timerToggleButton[timerState="start"] {
+    /* Кнопка таймера: Старт */
+    background: #161b22;
+    color: #ffffff;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 700;
+}
+QPushButton#timerToggleButton[timerState="start"]:hover {
+    background: #8830df19;
+    border-color: #8830df19;
+}
+QPushButton#timerToggleButton[timerState="pause"] {
+    /* Кнопка таймера: Пауза */
+    background: #b64745;
+    color: #ffffff;
+    border: 1px solid #f85149;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 700;
+}
+QPushButton#timerToggleButton[timerState="pause"]:hover {
+    background: #f85149;
+    border-color: #ff7b72;
+}
+QPushButton#timerToggleButton[timerState="continue"] {
+    /* Кнопка таймера: Продолжить */
+    background: #238636;
+    color: #ffffff;
+    border: 1px solid #2ea043;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 700;
+}
+QPushButton#timerToggleButton[timerState="continue"]:hover {
+    background: #2ea043;
+    border-color: #56d364;
+}
+/* Большие карточки:
+   Текущий слайд, Документ, Таймер, Навигация. */
+QPushButton#prevButton {
+    /* Кнопка "Предыдущий" */
+    background: #161b22;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 700;
+}
+QPushButton#prevButton:hover {
+    background: #21262d;
+    border-color: #21262d;
+}
+QPushButton#nextButton {
+    /* Кнопка "Следующий" */
+    background: #161b22;
+    color: #ffffff;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 700;
+}
+QPushButton#nextButton:hover {
+    background: #21262d;
+    border-color: #21262d;
+}
+QGroupBox {
+    /* Большие карточки/блоки внутри workspace */
+    background: #11161d;
+    border: 1px solid #21262d;
+    border-radius: 16px;
+    margin-top: 0px;
+    padding: 14px;
+    font-weight: 600;
+}
+QGroupBox::title {
+    height: 0px;
+    padding: 0px;
+    color: transparent;
+}
+QGroupBox#previewGroup {
+    /* Блок "Текущий слайд" */
+}
+QGroupBox#deckGroup {
+    /* Блок "Документ" */
+}
+QGroupBox#timerGroup {
+    /* Блок "Таймер" */
+}
+QGroupBox#navGroup {
+    /* Блок "Навигация" */
+}
+/* Внутренние заголовки карточек.
+   Это отдельные плашки внутри блоков. */
+QLabel#sectionTitleLabel {
+    /* Внутренние заголовки блоков:
+       "Текущий слайд", "Документ", "Таймер", "Навигация"
+    */
+    background: #11161d;
+    color: #f0f6fc;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: 15px;
+    font-weight: 700;
+}
+/* Левая колонка миниатюр. */
+QListWidget {
+    /* Колонка миниатюр слева */
+    background: #11161d;
+    border: 1px solid #21262d;
+    border-radius: 16px;
+    padding: 14px;
+    outline: none;
+}
+QListWidget::item {
+    background: transparent;
+    border: none;
+    margin: 3px 0;
+    padding: 0;
+}
+QListWidget::item:selected {
+    /* Выбранная строка списка: фон отключен, чтобы не было обрезанной заливки снизу.
+       Активную рамку/фон рисует сам SlideCardWidget ниже. */
+    background: transparent;
+    border: none;
+}
+QScrollBar:vertical {
+    background: #000d1117;
+    width: 10px;
+    margin: 10px 2px 10px 2px;
+}
+QScrollBar::handle:vertical {
+    background: #30363d;
+    min-height: 48px;
+    border-radius: 5px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: transparent;
+}
+/* Большой цифровой таймер справа. */
+QLabel#timerLabel {
+    /* Большое число таймера справа */
+    color: #f0f6fc;
+    font-size: 38px;
+    font-weight: 700;
+}
+QProgressBar#timerProgressBar {
+    /* Тонкая линия прогресса таймера: значение уменьшается к нулю */
+    background: #11161d;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    height: 8px;
+    max-height: 8px;
+    text-align: center;
+}
+QProgressBar#timerProgressBar::chunk {
+    background: #3fb950;
+    border-radius: 3px;
+}
+QLabel#fileInfoLabel {
+    /* Путь к открытому PDF или пустое состояние документа */
+    color: #c9d1d9;
+}
+QLabel#slideInfoLabel {
+    /* Строка со статусом слайдов */
+    color: #8b949e;
+    font-weight: 600;
+}
+QSpinBox::up-button, QSpinBox::down-button {
+    width: 0px;
+    min-width: 0px;
+    max-width: 0px;
+    border: none;
+    background: transparent;
+    subcontrol-origin: border;
+}
+QSpinBox::up-button {
+    subcontrol-position: top right;
+}
+QSpinBox::down-button {
+    subcontrol-position: bottom right;
+}
+QSpinBox::up-arrow {
+    width: 0px;
+    height: 0px;
+}
+QSpinBox::down-arrow {
+    width: 0px;
+    height: 0px;
+}
+QLabel {
+    color: #c9d1d9;
+}
+/*</workspace>*/
+
+/*<settings>*/
+/* settings:
+   окно настроек.
+   Здесь карточки секций, поля ввода, чекбоксы и статус NDI. */
+/* Фон окна настроек.
+   Меняй SETTINGS_WINDOW_BG, если хочешь другой общий фон за карточками. */
+QDialog#settingsDialog, QDialog#aboutDialog, QWidget#settingsRoot {
+    background: #0d1117; /* SETTINGS_WINDOW_BG */
+}
+QWidget {
+    background: transparent;
+    color: #e6edf3;
+    font-size: 14px;
+}
+QLabel#settingsHeader {
+    /* Заголовок окна настроек */
+    font-size: 22px;
+    font-weight: 700;
+    color: #f0f6fc;
+    padding-bottom: 2px;
+}
+QLabel#settingsSubheader {
+    /* Подзаголовок под "Настройки показа" */
+    color: #8b949e;
+    padding-bottom: 8px;
+}
+QLabel#settingsHint {
+    /* Подсказка под кнопкой "Применить ко всем вкладкам" */
+    color: #8b949e;
+    padding-top: 6px;
+    font-size: 13px;
+}
+QLabel {
+    /* Базовый цвет текстов в окне настроек */
+    color: #c9d1d9;
+}
+QPushButton, QComboBox, QSpinBox, QLineEdit {
+    /* Базовый стиль интерактивных элементов окна настроек */
+    background: #161b22;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 9px 12px;
+    min-height: 18px;
+}
+QPushButton:hover, QComboBox:hover, QLineEdit:hover {
+    border-color: #58a6ff;
+    background: #1c2128;
+}
+QPushButton:disabled, QComboBox:disabled, QSpinBox:disabled, QLineEdit:disabled {
+    color: #8b949e;
+    border-color: #21262d;
+    background: #11161d;
+}
+QSpinBox:hover, QSpinBox:focus {
+    border-color: #30363d;
+    background: #161b22;
+}
+QPushButton#primaryUtilityButton {
+    /* Кнопка "Применить ко всем вкладкам" */
+    background: #1f6feb;
+    color: #ffffff;
+    border-color: #388bfd;
+    border-radius: 12px;
+    min-height: 22px;
+    font-weight: 700;
+}
+QPushButton#primaryUtilityButton:hover {
+    background: #388bfd;
+    border-color: #58a6ff;
+}
+QComboBox {
+    /* Выпадающие списки экранов */
+}
+QLineEdit {
+    /* Поля имён NDI-источников */
+}
+QSpinBox {
+    /* Поля минут/секунд таймера по умолчанию */
+    border-color: #30363d;
+    background: #161b22;
+}
+QWidget#timerField {
+    background: transparent;
+}
+QLabel#timerFieldLabel {
+    color: #8b949e;
+    font-size: 13px;
+    font-weight: 700;
+    padding-left: 4px;
+}
+QSpinBox#settingsTimerSpin {
+    background: #11161d;
+    color: #f0f6fc;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 10px 14px;
+    min-height: 24px;
+    font-size: 15px;
+    selection-background-color: #30363d;
+    selection-color: #ffffff;
+}
+QSpinBox#settingsTimerSpin:hover, QSpinBox#settingsTimerSpin:focus {
+    background: #161b22;
+    border-color: #58a6ff;
+}
+QLineEdit:focus {
+    border-color: #58a6ff;
+    background: #1c2128;
+}
+QCheckBox {
+    spacing: 8px;
+    color: #c9d1d9;
+}
+QCheckBox::indicator {
+    /* Галочки чекбоксов NDI */
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    border: 1px solid #30363d;
+    background: #161b22;
+}
+QCheckBox::indicator:checked {
+    background: #1f6feb;
+    border-color: #388bfd;
+}
+/* Большие карточки секций настроек. */
+QGroupBox {
+    /* Карточки "Экраны", "NDI", "Таймер по умолчанию" */
+    background: #11161d;
+    border: 1px solid #21262d;
+    border-radius: 16px;
+    margin-top: 0px;
+    padding: 14px;
+    font-weight: 600;
+}
+QGroupBox::title {
+    height: 0px;
+    padding: 0px;
+    color: transparent;
+}
+QLabel#sectionTitleLabel {
+    /* Внутренние заголовки секций настроек */
+    background: #11161d;
+    color: #f0f6fc;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: 15px;
+    font-weight: 700;
+}
+QGroupBox#screensGroup {
+    /* Секция выбора экранов */
+}
+QGroupBox#ndiGroup {
+    /* Секция настроек NDI */
+}
+QGroupBox#timerDefaultsGroup {
+    /* Секция таймера по умолчанию */
+    padding: 18px;
+}
+QLabel#timerLabel {
+    color: #f0f6fc;
+    font-size: 44px;
+    font-weight: 700;
+    padding: 6px 0px 8px 0px;
+}
+QProgressBar#timerProgressBar {
+    background: #11161d;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    height: 8px;
+    max-height: 8px;
+    text-align: center;
+}
+QProgressBar#timerProgressBar::chunk {
+    background: #3fb950;
+    border-radius: 3px;
+}
+QLabel#ndiStatusLabel {
+    /* Строка статуса NDI */
+    color: #8b949e;
+    padding: 12px 14px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+}
+QComboBox::drop-down {
+    border: none;
+    width: 24px;
+}
+QSpinBox::up-button, QSpinBox::down-button {
+    width: 0px;
+    min-width: 0px;
+    max-width: 0px;
+    border: none;
+    background: transparent;
+    subcontrol-origin: border;
+}
+QSpinBox::up-button {
+    subcontrol-position: top right;
+}
+QSpinBox::down-button {
+    subcontrol-position: bottom right;
+}
+QSpinBox::up-arrow {
+    width: 0px;
+    height: 0px;
+}
+QSpinBox::down-arrow {
+    width: 0px;
+    height: 0px;
+}
+/*</settings>*/
+
+/*<preview_label>*/
+/* preview_label:
+   стиль большого preview, когда документ уже открыт. */
+/* Обычный стиль большого preview текущего слайда */
+QLabel {
+    background: #161b22;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 14px;
+}
+/*</preview_label>*/
+
+/*<empty_preview_label>*/
+/* empty_preview_label:
+   стиль preview, когда документ еще не открыт. */
+/* Preview, когда PDF ещё не открыт */
+QLabel {
+    background: #161b22;
+    color: #8b949e;
+    border: 1px dashed #30363d;
+    border-radius: 18px;
+    padding: 14px;
+}
+/*</empty_preview_label>*/
+
+/*<slide_card>*/
+/* slide_card:
+   карточка миниатюры слева.
+   __BG__ и __BORDER__ подставляются из Python.
+   __BG__ = фон карточки
+   __BORDER__ = цвет рамки карточки */
+/* Миниатюра слева.
+   __BG__ и __BORDER__ подставляются из Python:
+   - активная миниатюра
+   - неактивная миниатюра
+*/
+SlideCardWidget {
+    background: __BG__;
+    border: 1px solid __BORDER__;
+    border-radius: 14px;
+}
+QLabel {
+    background: transparent;
+    border: none;
+}
+/*</slide_card>*/
+
+/*<hint_label>*/
+/* hint_label:
+   маленькая серая подсказка под большим preview. */
+/* Серая подсказка под большим preview */
+color: #8b949e; padding: 0 2px;
+/*</hint_label>*/
+
+/*<transport_button_running>*/
+/* transport_button_running:
+   inline-стиль для состояния "Стоп". */
+/* Inline-стиль кнопки "Стоп" */
+background:#da3633; color:#ffffff; border:1px solid #f85149; border-radius:12px; min-width:42px; max-width:42px; min-height:42px; max-height:42px; padding:0px; font-weight:700;
+/*</transport_button_running>*/
+
+/*<transport_button_idle>*/
+/* transport_button_idle:
+   inline-стиль для состояния "Запуск". *С/
+/* Inline-стиль кнопки "Запуск" */
+QPushButton#transportButton {
+    background: #161b22;
+    color: #ffffff;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    min-width: 42px;
+    max-width: 42px;
+    min-height: 42px;
+    max-height: 42px;
+    padding: 0px;
+    font-weight: 700;
+}
+QPushButton#transportButton:hover {
+    background: #21262d;
+    border-color: #21262d;
+}
+/*</transport_button_idle>*/
+
+/*<transport_button_disabled>*/
+/* transport_button_disabled:
+   inline-стиль кнопки запуска, когда PDF еще не открыт. */
+QPushButton#transportButton {
+    background: #11161d;
+    color: #6e7681;
+    border: 1px solid #21262d;
+    border-radius: 10px;
+    min-width: 42px;
+    max-width: 42px;
+    min-height: 42px;
+    max-height: 42px;
+    padding: 0px;
+    font-weight: 700;
+}
+QPushButton#transportButton:hover {
+    background: #11161d;
+    border-color: #21262d;
+}
+/*</transport_button_disabled>*/
+
+/*<transport_button_ready>*/
+/* transport_button_ready:
+   inline-стиль кнопки, когда PDF открыт.
+   Цвет стрелки задаётся ниже в секции transport_icon_ready. */
+/* Фон остаётся тёмным, зелёной становится только стрелка внутри кнопки. */
+QPushButton#transportButton {
+    background: #161b22;
+    color: #ffffff;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    min-width: 42px;
+    max-width: 42px;
+    min-height: 42px;
+    max-height: 42px;
+    padding: 0px;
+    font-weight: 700;
+}
+QPushButton#transportButton:hover {
+    background: #21262d;
+    border-color: #21262d;
+}
+/*</transport_button_ready>*/
+
+/*<transport_icon_idle>*/
+#8b949e
+/*</transport_icon_idle>*/
+
+/*<transport_icon_ready>*/
+#3fb950
+/*</transport_icon_ready>*/
+
+/*<output_status_icon_off>*/
+#6e7681
+/*</output_status_icon_off>*/
+
+/*<output_status_icon_active>*/
+#3fb950
+/*</output_status_icon_active>*/
+
+/*<output_status_icon_error>*/
+#f85149
+/*</output_status_icon_error>*/
+
+/*<ndi_status>*/
+/* ndi_status:
+   inline-стиль строки статуса NDI.
+   __COLOR__ подставляется из Python. */
+/* Inline-стиль строки статуса NDI.
+   __COLOR__ подставляется из Python в зависимости от состояния.
+*/
+color: __COLOR__; padding-top: 2px; line-height: 145%;
+/*</ndi_status>*/

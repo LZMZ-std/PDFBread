@@ -4,20 +4,29 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QColor, QFont, QImage, QKeyEvent, QPainter, QPalette, QPen, QPixmap
 from PySide6.QtWidgets import QLabel, QHBoxLayout, QSizePolicy, QVBoxLayout, QWidget
 
+from pdfbread.i18n import tr
 from pdfbread.pdf_backend import fit_pixmap
 
 
 def _draw_slide_card(painter: QPainter, pixmap: QPixmap, x: int, y: int, width: int, height: int) -> None:
+    if pixmap.isNull():
+        return
+
     painter.save()
     painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+    scaled = fit_pixmap(pixmap, max(1, width - 28), max(1, height - 28))
+    draw_x = x + (width - scaled.width()) // 2
+    draw_y = y + (height - scaled.height()) // 2
+    frame_rect = (
+        draw_x - 10,
+        draw_y - 10,
+        scaled.width() + 20,
+        scaled.height() + 20,
+    )
     painter.setPen(QPen(QColor("#173B1D"), 2))
     painter.setBrush(QColor("#090B0C"))
-    painter.drawRoundedRect(x, y, width, height, 16, 16)
-    if not pixmap.isNull():
-        scaled = fit_pixmap(pixmap, width - 28, height - 28)
-        draw_x = x + (width - scaled.width()) // 2
-        draw_y = y + (height - scaled.height()) // 2
-        painter.drawPixmap(draw_x, draw_y, scaled)
+    painter.drawRoundedRect(*frame_rect, 16, 16)
+    painter.drawPixmap(draw_x, draw_y, scaled)
     painter.restore()
 
 
@@ -64,7 +73,7 @@ def render_teleprompter_frame(
 
     painter.setPen(QColor("#FFFFFF"))
     painter.setFont(meta_font)
-    painter.drawText(*meta_rect, Qt.AlignmentFlag.AlignCenter, f"Слайд {page_index + 1} из {page_count}")
+    painter.drawText(*meta_rect, Qt.AlignmentFlag.AlignCenter, tr("slide_of", current=page_index + 1, total=page_count))
 
     _draw_slide_card(painter, current_pixmap, *current_rect)
     _draw_slide_card(painter, next_pixmap, *next_rect)
@@ -72,8 +81,8 @@ def render_teleprompter_frame(
     title_y = slides_top + slides_height + title_gap
     painter.setPen(QColor("#35D35F"))
     painter.setFont(title_font)
-    painter.drawText(current_rect[0], title_y, current_rect[2], title_height, Qt.AlignmentFlag.AlignCenter, "Текущий")
-    painter.drawText(next_rect[0], title_y, next_rect[2], title_height, Qt.AlignmentFlag.AlignCenter, "Следующий")
+    painter.drawText(current_rect[0], title_y, current_rect[2], title_height, Qt.AlignmentFlag.AlignCenter, tr("teleprompter.current"))
+    painter.drawText(next_rect[0], title_y, next_rect[2], title_height, Qt.AlignmentFlag.AlignCenter, tr("teleprompter.next"))
 
     painter.end()
     return image
@@ -85,15 +94,7 @@ class SlidePanel(QWidget):
         self._pixmap = QPixmap()
         self.setMinimumSize(260, 180)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.setStyleSheet(
-            """
-            QWidget {
-                background:#090B0C;
-                border:1px solid #173B1D;
-                border-radius:16px;
-            }
-            """
-        )
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, False)
 
     def set_slide(self, pixmap: QPixmap) -> None:
         self._pixmap = pixmap
@@ -105,10 +106,14 @@ class SlidePanel(QWidget):
             return
 
         painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
         painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform, True)
         scaled = fit_pixmap(self._pixmap, self.width() - 28, self.height() - 28)
         x = (self.width() - scaled.width()) // 2
         y = (self.height() - scaled.height()) // 2
+        painter.setPen(QPen(QColor("#173B1D"), 2))
+        painter.setBrush(QColor("#090B0C"))
+        painter.drawRoundedRect(x - 10, y - 10, scaled.width() + 20, scaled.height() + 20, 16, 16)
         painter.drawPixmap(x, y, scaled)
 
 
@@ -132,16 +137,20 @@ class TeleprompterWindow(QWidget):
         self._meta_label.setStyleSheet("color:#FFFFFF;")
         self._meta_label.setFont(QFont("Segoe UI", 13))
 
-        slides_row = QHBoxLayout()
+        self._slides_widget = QWidget()
+        slides_row = QHBoxLayout(self._slides_widget)
+        slides_row.setContentsMargins(0, 0, 0, 0)
         slides_row.setSpacing(18)
         self._current_slide = SlidePanel()
         self._next_slide = SlidePanel()
         slides_row.addWidget(self._current_slide, 1)
         slides_row.addWidget(self._next_slide, 1)
 
-        titles_row = QHBoxLayout()
-        self._current_title = QLabel("Текущий", alignment=Qt.AlignmentFlag.AlignCenter)
-        self._next_title = QLabel("Следующий", alignment=Qt.AlignmentFlag.AlignCenter)
+        self._titles_widget = QWidget()
+        titles_row = QHBoxLayout(self._titles_widget)
+        titles_row.setContentsMargins(0, 0, 0, 0)
+        self._current_title = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
+        self._next_title = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
         self._current_title.setStyleSheet("color:#35D35F; font-size:18px; font-weight:700;")
         self._next_title.setStyleSheet("color:#35D35F; font-size:18px; font-weight:700;")
         titles_row.addWidget(self._current_title, 1)
@@ -152,8 +161,24 @@ class TeleprompterWindow(QWidget):
         layout.setSpacing(16)
         layout.addWidget(self._timer_label)
         layout.addWidget(self._meta_label)
-        layout.addLayout(slides_row, 1)
-        layout.addLayout(titles_row)
+        layout.addWidget(self._slides_widget, 1)
+        layout.addWidget(self._titles_widget)
+        self._root_layout = layout
+        self._duplicate_label = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
+        self._duplicate_label.setStyleSheet("background:#000000;")
+        self._duplicate_label.hide()
+        layout.addWidget(self._duplicate_label, 1)
+        self._duplicate_mode = False
+        self._duplicate_pixmap = QPixmap()
+        self._page_index = 0
+        self._page_count = 0
+        self.retranslate()
+
+    def retranslate(self) -> None:
+        self._current_title.setText(tr("teleprompter.current"))
+        self._next_title.setText(tr("teleprompter.next"))
+        if self._page_count:
+            self._meta_label.setText(tr("slide_of", current=self._page_index + 1, total=self._page_count))
 
     def update_content(
         self,
@@ -163,13 +188,51 @@ class TeleprompterWindow(QWidget):
         page_count: int,
         remaining_text: str,
     ) -> None:
+        self.set_duplicate_mode(False)
         self._next_slide.set_slide(next_pixmap)
         self._current_slide.set_slide(current_pixmap)
-        self._meta_label.setText(f"Слайд {page_index + 1} из {page_count}")
+        self._page_index = page_index
+        self._page_count = page_count
+        self._meta_label.setText(tr("slide_of", current=page_index + 1, total=page_count))
         self._timer_label.setText(remaining_text)
+
+    def show_duplicate(self, pixmap: QPixmap) -> None:
+        self.set_duplicate_mode(True)
+        self._duplicate_pixmap = pixmap
+        self._refresh_duplicate()
+
+    def set_duplicate_mode(self, enabled: bool) -> None:
+        if self._duplicate_mode == enabled:
+            return
+        self._duplicate_mode = enabled
+        self._timer_label.setVisible(not enabled)
+        self._meta_label.setVisible(not enabled)
+        self._slides_widget.setVisible(not enabled)
+        self._titles_widget.setVisible(not enabled)
+        self._duplicate_label.setVisible(enabled)
+        if enabled:
+            self._root_layout.setContentsMargins(0, 0, 0, 0)
+            self._root_layout.setSpacing(0)
+        else:
+            self._root_layout.setContentsMargins(22, 22, 22, 22)
+            self._root_layout.setSpacing(16)
+            self._duplicate_label.clear()
+
+    def _refresh_duplicate(self) -> None:
+        if self._duplicate_pixmap.isNull():
+            self._duplicate_label.clear()
+            return
+        width = max(1, self._duplicate_label.width() or self.width())
+        height = max(1, self._duplicate_label.height() or self.height())
+        self._duplicate_label.setPixmap(fit_pixmap(self._duplicate_pixmap, width, height))
 
     def update_timer(self, remaining_text: str) -> None:
         self._timer_label.setText(remaining_text)
+
+    def resizeEvent(self, event) -> None:  # type: ignore[override]
+        super().resizeEvent(event)
+        if self._duplicate_mode:
+            self._refresh_duplicate()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:  # type: ignore[override]
         if event.key() == Qt.Key.Key_Escape:

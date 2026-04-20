@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Dual-screen PDF presenter with teleprompter, deck tabs, and optional NDI output"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
 dependencies = [
     "PySide6>=6.7",
     "PyMuPDF>=1.24",

@@ -7,10 +7,12 @@ from pathlib import Path
 
 from PySide6.QtGui import QImage
 
+from pdfbread.i18n import tr
 from pdfbread.paths import app_root
 
-NDI_FOURCC_BGRA = ord("B") | (ord("G") << 8) | (ord("R") << 16) | (ord("A") << 24)
-NDI_FRAME_FORMAT_PROGRESSIVE = 0
+NDI_FOURCC_BGRX = ord("B") | (ord("G") << 8) | (ord("R") << 16) | (ord("X") << 24)
+NDI_FRAME_FORMAT_INTERLEAVED = 0
+NDI_FRAME_FORMAT_PROGRESSIVE = 1
 
 
 class NDIlib_send_create_t(ctypes.Structure):
@@ -62,10 +64,10 @@ class NdiLibrary:
     @property
     def status_text(self) -> str:
         if self.available:
-            return "NDI Runtime найден. Источники можно выводить в сеть."
+            return tr("ndi.runtime_found")
         if self._load_error:
             return self._load_error
-        return "NDI Runtime не найден."
+        return tr("ndi.runtime_missing")
 
     def create_sender(self, name: str) -> ctypes.c_void_p | None:
         if not self._ensure_loaded() or self._lib is None:
@@ -91,7 +93,7 @@ class NdiLibrary:
         if sender is None or not self._ensure_loaded() or self._lib is None or image.isNull():
             return False
 
-        frame_image = image.convertToFormat(QImage.Format.Format_ARGB32)
+        frame_image = image.convertToFormat(QImage.Format.Format_RGB32)
         bits = frame_image.bits()
         frame_size = frame_image.sizeInBytes()
         if hasattr(bits, "setsize"):
@@ -103,7 +105,7 @@ class NdiLibrary:
         frame = NDIlib_video_frame_v2_t(
             xres=frame_image.width(),
             yres=frame_image.height(),
-            FourCC=NDI_FOURCC_BGRA,
+            FourCC=NDI_FOURCC_BGRX,
             frame_rate_N=30,
             frame_rate_D=1,
             picture_aspect_ratio=0.0,
@@ -147,7 +149,7 @@ class NdiLibrary:
         library.NDIlib_destroy.restype = None
 
         if not library.NDIlib_initialize():
-            self._load_error = "NDI Runtime найден, но не инициализируется."
+            self._load_error = tr("ndi.init_failed")
             return False
 
         self._lib = library
@@ -175,12 +177,12 @@ class NdiLibrary:
                 if dll_handle is not None:
                     dll_handle.close()
 
-        self._load_error = "NDI Runtime не найден. Установи NDI Runtime или NDI Tools."
+        self._load_error = tr("ndi.install_missing")
         return None, None
 
     def _candidate_paths(self) -> list[Path]:
         if os.name != "nt":
-            self._load_error = "NDI вывод сейчас подготовлен только для Windows."
+            self._load_error = tr("ndi.windows_only")
             return []
 
         root = app_root()
@@ -330,7 +332,7 @@ class NdiOutputController:
                 requested=False,
                 available=self.library.available,
                 active_names=[],
-                message="NDI выключен для этой вкладки.",
+                message=tr("ndi.off_tab"),
             )
 
         if not self.library.available:
@@ -361,8 +363,8 @@ class NdiOutputController:
                 requested=True,
                 available=True,
                 active_names=[],
-                message="NDI включён, но источники не создались.",
-                warning="NDI Runtime найден, но источники не удалось создать.",
+                message=tr("ndi.no_sources"),
+                warning=tr("ndi.no_sources_warning"),
             )
 
         joined = ", ".join(active_names)
@@ -370,7 +372,7 @@ class NdiOutputController:
             requested=True,
             available=True,
             active_names=active_names,
-            message=f"NDI в эфире: {joined}",
+            message=tr("ndi.live", sources=joined),
         )
 
     def send(self, main_image: QImage | None, teleprompter_image: QImage | None) -> None:

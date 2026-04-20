@@ -8,6 +8,17 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QImage, QPixmap
 
 
+_TOOLS = getattr(fitz, "TOOLS", None)
+if _TOOLS is not None:
+    suppress_errors = getattr(_TOOLS, "mupdf_display_errors", None)
+    if callable(suppress_errors):
+        suppress_errors(False)
+
+    suppress_warnings = getattr(_TOOLS, "mupdf_display_warnings", None)
+    if callable(suppress_warnings):
+        suppress_warnings(False)
+
+
 class PdfBackend:
     def __init__(self) -> None:
         self._document: fitz.Document | None = None
