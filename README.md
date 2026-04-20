@@ -1,6 +1,6 @@
 # PDFBread
 
-![PDFBread main window](screen/main.png)
+![PDFBread main window](icon.png)
 
 PDFBread is a desktop PDF presenter for live talks, lectures, streams, and small production setups. It provides a main presentation output, a separate teleprompter output, tabbed PDF decks, timers, and optional NDI output.
 
