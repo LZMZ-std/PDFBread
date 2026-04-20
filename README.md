@@ -95,7 +95,7 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 # PDFBread на русском
 
-![Главное окно PDFBread](screen/main.png)
+![Главное окно PDFBread](icon.png)
 
 PDFBread - настольное приложение для показа PDF-презентаций на выступлениях, лекциях, трансляциях и небольших production-сетапах. В приложении есть главный экран презентации, отдельный экран суфлёра, вкладки с PDF, таймеры и опциональный вывод в NDI.
 
